@@ -10,7 +10,7 @@ const createFloatingSymbols = (count = 50) => {
 		symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
 		// Randomize Direction
-		if (Math.random < 0.5) {
+		if (Math.random() < 0.5) {
 			symbol.classList.add('up');
 			symbol.style.bottom = `${Math.random() * -100}px`;
 		} else {
