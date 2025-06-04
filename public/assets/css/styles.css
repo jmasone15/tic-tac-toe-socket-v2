@@ -51,7 +51,6 @@ body {
     font-size: 1rem;
 }
 
-
 .floating-symbol {
     position: fixed;
     opacity: 0.08;
@@ -116,5 +115,27 @@ button:hover {
 
     100% {
         transform: translateY(120vh) rotate(-360deg);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0)
+    }
+
+    25% {
+        transform: translateX(3px)
+    }
+
+    50% {
+        transform: translateX(-3px)
+    }
+
+    75% {
+        transform: translateX(3px)
+    }
+
+    100% {
+        transform: translateX(0)
     }
 }
