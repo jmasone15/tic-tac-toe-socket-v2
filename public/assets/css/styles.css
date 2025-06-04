@@ -1,3 +1,120 @@
+/* DOM Selectors */
+* {
+    box-sizing: border-box;
+}
+
 body {
-    background-color: lightblue;
+    margin: 0;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    padding: 1rem;
+    font-family: 'Fredoka', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* Classes */
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    background-color: white;
+    border-radius: 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.container h1 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.container button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: none;
+    border-radius: 1rem;
+    font-size: 1.2rem;
+    color: white;
+    cursor: pointer;
+    transition: filter 0.3s ease;
+}
+
+.container input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    border: 2px solid #ddd;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+
+
+.floating-symbol {
+    position: fixed;
+    opacity: 0.08;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+    z-index: -1;
+}
+
+.floating-symbol.up {
+    animation: floatUp 20s linear;
+}
+
+.floating-symbol.down {
+    animation: floatDown 25s linear;
+}
+
+.join-section {
+    margin-top: 4rem;
+}
+
+/* IDs */
+#join-room {
+    background: #4D96FF;
+}
+
+#create-room {
+    background-color: #1bc71b;
+}
+
+/* Pseudo Classes */
+button:hover {
+    filter: brightness(1.1);
+}
+
+/* Media Queries */
+@media (max-width: 500px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        font-size: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(-120vh) rotate(360deg);
+    }
+}
+
+@keyframes floatDown {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(120vh) rotate(-360deg);
+    }
 }
