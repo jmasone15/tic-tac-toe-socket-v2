@@ -6,7 +6,7 @@ import path from 'path';
 
 // Internal Dependencies
 import __dirname from './utils/getDirname.js';
-import TTT_Socket from './utils/Socket.js';
+import TTT_Socket from './classes/Socket.js';
 import { router as htmlRoutes } from './routes/staticRoutes.js';
 
 // Server setup
