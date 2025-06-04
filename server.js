@@ -6,17 +6,23 @@ import path from 'path';
 
 // Internal Dependencies
 import __dirname from './utils/getDirname.js';
+import TTT_Socket from './utils/Socket.js';
+import { router as htmlRoutes } from './routes/staticRoutes.js';
 
 // Server setup
 const PORT = process.env.PORT || 3001;
 const app = express();
 const server = http.createServer(app);
 
-// Middleware
-app.use(morgan('tiny'));
+// Create WebSocket Instance
+new TTT_Socket(server);
 
 // Serve static assets
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware
+app.use(morgan('tiny'));
+app.use('/', htmlRoutes);
 
 // 404 Route
 app.use((_, res) => {
