@@ -81,6 +81,18 @@ export default class Rooms {
 			// Set socket with roomCode to identify on disconnect
 			socket.roomCode = roomCode;
 
+			// Notify user of success
+			socket.send(
+				JSON.stringify({
+					type: 'joined-room',
+					roomCode,
+					payload: {
+						symbol: player.symbol,
+						gameStart: targetRoom.full
+					}
+				})
+			);
+
 			log({
 				type: `Room ${roomCode}`,
 				message: `Player [${player.symbol}] has joined the room.`

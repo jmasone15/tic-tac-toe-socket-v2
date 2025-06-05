@@ -1,0 +1,52 @@
+/* DOM Selectors */
+body {
+    background: linear-gradient(135deg, #cfd9ff 0%, #e2caff 100%);
+}
+
+/* Classes */
+.game-container {
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+}
+
+.link-container {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+
+/* IDs */
+#pre-game {
+    padding: 30px;
+    border-radius: 8px;
+    background: #fff;
+}
+
+#room-link {
+    flex: 1;
+    padding: 8px;
+    font-size: 1rem;
+    margin-right: 8px;
+    border-radius: 4px;
+    border: 1px solid #868686;
+    background-color: #fff;
+}
+
+#copy-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: rgb(58, 58, 182);
+}
+
+#check-icon {
+    font-size: 1.5rem;
+    color: green;
+}
+
+/* Pseudo */
+#copy-icon:hover {
+    transition: transform 0.1s ease-in-out;
+    transform: scale(1.1);
+}

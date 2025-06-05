@@ -72,6 +72,10 @@ body {
     margin-top: 4rem;
 }
 
+.d-none {
+    display: none !important;
+}
+
 /* IDs */
 #join-room {
     background: #4D96FF;

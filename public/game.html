@@ -4,13 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/game.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500&display=swap" rel="stylesheet">
     <title>Tic Tac Toe</title>
 </head>
 
 <body>
-    <h1>hello, world!</h1>
+    <div class="game-container">
+        <div id="pre-game">
+            <h1>Waiting for opponent . . .</h1>
+            <div>
+                <p>Room Code: <strong id="room-code">ABC123</strong></p>
+                <div class="link-container">
+                    <input type="text" id="room-link" readonly
+                        value="https://yourgame.com/game.html?mode=join&room=ABC123">
+                    <i class="fa-solid fa-copy" id="copy-icon"></i>
+                    <i class="d-none" id="check-icon"></i>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <script src="/assets/js/socket.js"></script>
+    <script src="/assets/js/animation.js"></script>
+    <script src="https://kit.fontawesome.com/319698822a.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
