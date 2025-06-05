@@ -32,8 +32,13 @@ class TTT_Frontend_Socket {
 		return;
 	};
 
-	receiveMessage = (message) => {
-		console.log(message);
+	receiveMessage = ({ data }) => {
+		const { type, roomCode, payload } = JSON.parse(data);
+
+		if (type === 'home') {
+			alert(payload.message);
+			this.returnHome();
+		}
 	};
 
 	returnHome = () => {

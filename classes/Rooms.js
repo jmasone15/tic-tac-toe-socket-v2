@@ -9,6 +9,11 @@ class Player {
 	get ready() {
 		return this.socket && this.socket.readyState === this.socket.OPEN;
 	}
+
+	message(type, roomCode, payload) {
+		this.socket.send(JSON.stringify({ type, roomCode, payload }));
+		return;
+	}
 }
 
 class Room {
@@ -26,6 +31,15 @@ class Room {
 export default class Rooms {
 	constructor() {
 		this.rooms = new Map();
+	}
+
+	sendSocketHome(socket, message) {
+		socket.send(
+			JSON.stringify({
+				type: 'home',
+				payload: { message }
+			})
+		);
 	}
 
 	findRoom = (roomCode) => {
@@ -64,10 +78,15 @@ export default class Rooms {
 			);
 			targetRoom.players.push(player);
 
+			// Set socket with roomCode to identify on disconnect
+			socket.roomCode = roomCode;
+
 			log({
 				type: 'Room',
 				message: `Player [${player.symbol}] has joined Room [${targetRoom.roomCode}]`
 			});
+		} else {
+			this.sendSocketHome(socket, 'Could not join room...');
 		}
 
 		return;

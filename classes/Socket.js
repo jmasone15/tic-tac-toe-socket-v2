@@ -21,7 +21,7 @@ export default class TTT_Socket {
 		});
 	}
 
-	// TODO - Error handling
+	// TODO - Error handling | Nightly empty room cleanup
 	onMessage = (socket, message) => {
 		const messageObj = new Message(message);
 
@@ -29,6 +29,8 @@ export default class TTT_Socket {
 			this.rooms.createRoom(socket);
 		} else if (messageObj.type === 'join') {
 			this.rooms.joinRoom({ roomCode: messageObj.roomCode, socket });
+		} else {
+			this.rooms.sendSocketHome(socket, 'Something went wrong...');
 		}
 	};
 
