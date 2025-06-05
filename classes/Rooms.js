@@ -59,10 +59,10 @@ export default class Rooms {
 				const room = new Room(roomCode);
 				this.rooms.set(roomCode, room);
 
-				// Add player to new room
-				this.joinRoom({ room, socket });
+				log({ type: 'Rooms', message: `Room ${roomCode} has been created.` });
 
-				log({ type: 'Room', message: `Room ${roomCode} has been created.` });
+				// Add player to new room
+				this.joinRoom({ room, roomCode, socket });
 				return;
 			}
 		}
@@ -82,8 +82,8 @@ export default class Rooms {
 			socket.roomCode = roomCode;
 
 			log({
-				type: 'Room',
-				message: `Player [${player.symbol}] has joined Room [${targetRoom.roomCode}]`
+				type: `Room ${roomCode}`,
+				message: `Player [${player.symbol}] has joined the room.`
 			});
 		} else {
 			this.sendSocketHome(socket, 'Could not join room...');
@@ -92,13 +92,30 @@ export default class Rooms {
 		return;
 	};
 
-	roomsLog = (message) => {
-		const now = new Date();
-		const timestamp = `[${now
-			.toISOString()
-			.replace('T', ' ')
-			.substring(0, 19)}]`;
+	leaveRoom = (socket) => {
+		if (!socket.roomCode) {
+			return;
+		}
 
-		console.log(`${timestamp} ${message}`);
+		const room = this.findRoom(socket.roomCode);
+		const playerIdx = room.players.findIndex((p) => p.socket === socket);
+		const leavingPlayerSymbol = room.players[playerIdx].symbol;
+
+		if (room.full) {
+			// Remove player and update current player symbol
+			room.players.splice(playerIdx, 1);
+			room.players[0].symbol = 'X';
+
+			log({
+				type: `Room ${socket.roomCode}`,
+				message: `Player [${leavingPlayerSymbol}] has left the room.`
+			});
+		} else {
+			this.rooms.delete(socket.roomCode);
+			log({
+				type: `Room ${socket.roomCode}`,
+				message: 'Room has been deleted.'
+			});
+		}
 	};
 }

@@ -35,6 +35,8 @@ export default class TTT_Socket {
 	};
 
 	onClose = (socket) => {
+		this.rooms.leaveRoom(socket);
+
 		log({
 			type: 'Socket',
 			message: `❌ WebSocket disconnected: ${socket._socket.remoteAddress}`
