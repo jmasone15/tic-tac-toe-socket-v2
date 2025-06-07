@@ -1,17 +1,29 @@
 import { generateLogMessage as log } from '../utils/logMessage.js';
 
+class Message {
+	constructor({ type, roomCode, payload }) {
+		this.type = type;
+		this.roomCode = roomCode;
+		this.payload = payload;
+	}
+}
+
 class Player {
 	constructor(socket, symbol) {
 		this.socket = socket;
 		this.symbol = symbol;
+		this.gameReady = false;
 	}
 
 	get ready() {
 		return this.socket && this.socket.readyState === this.socket.OPEN;
 	}
 
-	message(type, roomCode, payload) {
-		this.socket.send(JSON.stringify({ type, roomCode, payload }));
+	message({ type, roomCode, payload }) {
+		if (this.ready) {
+			this.socket.send(JSON.stringify({ type, roomCode, payload }));
+		}
+
 		return;
 	}
 }
@@ -25,6 +37,18 @@ class Room {
 
 	get full() {
 		return this.players.length === 2;
+	}
+
+	findPlayerIdx(socket) {
+		return this.players.findIndex((p) => p.socket === socket);
+	}
+
+	messageRoom(message, rejectSocket) {
+		this.players.forEach((p) => {
+			if (!rejectSocket || p.socket !== rejectSocket) {
+				p.message(message);
+			}
+		});
 	}
 }
 
@@ -82,16 +106,24 @@ export default class Rooms {
 			socket.roomCode = roomCode;
 
 			// Notify user of success
-			socket.send(
-				JSON.stringify({
-					type: 'joined-room',
-					roomCode,
-					payload: {
-						symbol: player.symbol,
-						gameStart: targetRoom.full
-					}
-				})
-			);
+			const joinedMessage = new Message({
+				type: 'joined-room',
+				roomCode,
+				payload: {
+					symbol: player.symbol,
+					roomFull: targetRoom.full
+				}
+			});
+			player.message(joinedMessage);
+
+			// Notify other player (if exists)
+			if (targetRoom.full) {
+				const playerJoinMessage = new Message({
+					type: 'player-join',
+					roomCode
+				});
+				targetRoom.messageRoom(playerJoinMessage, socket);
+			}
 
 			log({
 				type: `Room ${roomCode}`,
@@ -110,13 +142,23 @@ export default class Rooms {
 		}
 
 		const room = this.findRoom(socket.roomCode);
-		const playerIdx = room.players.findIndex((p) => p.socket === socket);
+		const playerIdx = room.findPlayerIdx(socket);
 		const leavingPlayerSymbol = room.players[playerIdx].symbol;
 
 		if (room.full) {
 			// Remove player and update current player symbol
 			room.players.splice(playerIdx, 1);
 			room.players[0].symbol = 'X';
+
+			// Notify remaining player
+			const leaveMessage = new Message({
+				type: 'player-leave',
+				roomCode: socket.roomCode,
+				payload: {
+					newSymbol: 'X'
+				}
+			});
+			room.messageRoom(leaveMessage);
 
 			log({
 				type: `Room ${socket.roomCode}`,
@@ -128,6 +170,28 @@ export default class Rooms {
 				type: `Room ${socket.roomCode}`,
 				message: 'Room has been deleted.'
 			});
+		}
+	};
+
+	playerReady = (socket, roomCode) => {
+		const targetRoom = this.findRoom(roomCode);
+
+		if (targetRoom && targetRoom.full) {
+			const targetPlayerIdx = targetRoom.findPlayerIdx(socket);
+
+			if (targetPlayerIdx !== -1) {
+				targetRoom.players[targetPlayerIdx].gameReady = true;
+
+				log({
+					type: `Room ${roomCode}`,
+					message: `Player [${targetRoom.players[targetPlayerIdx].symbol}] is ready.`
+				});
+
+				if (targetRoom.players.every((p) => p.gameReady)) {
+					targetRoom.gameActive = true;
+					console.log('start game');
+				}
+			}
 		}
 	};
 }

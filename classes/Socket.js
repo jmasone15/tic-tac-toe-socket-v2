@@ -21,14 +21,17 @@ export default class TTT_Socket {
 		});
 	}
 
-	// TODO - Error handling | Nightly empty room cleanup
+	// TODO - Error handling | Empty room cleanup
 	onMessage = (socket, message) => {
 		const messageObj = new Message(message);
+		const roomCode = messageObj.roomCode;
 
 		if (messageObj.type === 'create') {
 			this.rooms.createRoom(socket);
 		} else if (messageObj.type === 'join') {
-			this.rooms.joinRoom({ roomCode: messageObj.roomCode, socket });
+			this.rooms.joinRoom({ roomCode, socket });
+		} else if (messageObj.type === 'player-ready') {
+			this.rooms.playerReady(socket, roomCode);
 		} else {
 			this.rooms.sendSocketHome(socket, 'Something went wrong...');
 		}

@@ -30,7 +30,7 @@ body {
     font-size: 2rem;
 }
 
-.container button {
+button {
     width: 100%;
     padding: 1rem;
     margin-top: 1rem;
@@ -77,12 +77,16 @@ body {
 }
 
 /* IDs */
-#join-room {
+.green {
+    background-color: #1bc71b;
+}
+
+.blue {
     background: #4D96FF;
 }
 
-#create-room {
-    background-color: #1bc71b;
+.disabled-button {
+    cursor: wait;
 }
 
 /* Pseudo Classes */

@@ -13,7 +13,7 @@
 <body>
     <div class="game-container">
         <div id="pre-game">
-            <h1>Waiting for opponent . . .</h1>
+            <h1 id="pre-game-header">Waiting for opponent . . .</h1>
             <div>
                 <p>Room Code: <strong id="room-code">ABC123</strong></p>
                 <div class="link-container">
@@ -22,12 +22,15 @@
                     <i class="fa-solid fa-copy" id="copy-icon"></i>
                     <i class="d-none" id="check-icon"></i>
                 </div>
+                <button class="d-none" id="start-game">Start Game</button>
             </div>
 
         </div>
     </div>
 
+    <script src="/assets/js/elements.js"></script>
     <script src="/assets/js/socket.js"></script>
+    <script src="/assets/js/game.js"></script>
     <script src="/assets/js/animation.js"></script>
     <script src="https://kit.fontawesome.com/319698822a.js" crossorigin="anonymous"></script>
 </body>
