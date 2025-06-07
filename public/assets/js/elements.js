@@ -12,6 +12,8 @@ class DomElements {
 			await navigator.clipboard.writeText(this.roomLinkEl.value);
 			this.copyIcon.setAttribute('class', 'd-none');
 			this.checkIcon.setAttribute('class', 'fa-solid fa-check');
+
+			showToast({ message: 'Link copied!', type: 'success', seconds: 3 });
 		});
 	}
 

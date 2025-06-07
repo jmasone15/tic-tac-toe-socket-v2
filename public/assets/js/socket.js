@@ -1,6 +1,6 @@
 // TODO - setup localStorage/cookie caching of generated User IDs to prevent multiple rooms.
 
-const { showElement } = domElements;
+const { showElement, hideElement } = domElements;
 
 class TTT_Frontend_Socket {
 	constructor() {
@@ -59,8 +59,10 @@ class TTT_Frontend_Socket {
 			}
 		} else if (type === 'player-join') {
 			showElement(domElements.startBtn, 'green');
+			showToast({ message: 'Opponent has joined!' });
 		} else if (type === 'player-leave') {
-			console.log('player left');
+			hideElement(domElements.startBtn);
+			showToast({ message: 'Opponent has left!', type: 'error' });
 		}
 
 		return;
@@ -78,3 +80,5 @@ class TTT_Frontend_Socket {
 		return;
 	};
 }
+
+const socketConnection = new TTT_Frontend_Socket();

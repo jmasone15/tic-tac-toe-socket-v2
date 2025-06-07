@@ -17,8 +17,62 @@ body {
     margin-bottom: 8px;
 }
 
+.home-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: #4D96FF;
+    background: #fff;
+    border-radius: 50%;
+    padding: 0.5rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: background 0.2s ease;
+}
+
+.toast {
+    background-color: #323232;
+    color: #fff;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(-10px);
+    user-select: none;
+}
+
+.toast.success {
+    background-color: #28a745;
+}
+
+.toast.error {
+    background-color: #dc3545;
+}
+
+.toast.info {
+    background-color: #17a2b8;
+}
+
+.toast.warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+
 
 /* IDs */
+#toast-container {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 #pre-game {
     padding: 30px;
     border-radius: 8px;
@@ -50,4 +104,25 @@ body {
 #copy-icon:hover {
     transition: transform 0.1s ease-in-out;
     transform: scale(1.1);
+}
+
+.home-button:hover {
+    background: #f0f0f0;
+    transition: transform 0.1s ease-in-out;
+    transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }
