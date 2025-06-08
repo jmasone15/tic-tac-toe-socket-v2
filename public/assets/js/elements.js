@@ -6,6 +6,10 @@ class DomElements {
 		this.startBtn = document.getElementById('start-game');
 		this.roomCodeEl = document.getElementById('room-code');
 		this.roomLinkEl = document.getElementById('room-link');
+		this.pregameHeader = document.getElementById('pre-game-header');
+		this.pregameDiv = document.getElementById('pre-game');
+		this.wrapperDiv = document.getElementById('wrapper');
+		this.gameCells = document.querySelectorAll('.cell');
 
 		// Event Listeners
 		this.createEventListener(this.copyIcon, async () => {

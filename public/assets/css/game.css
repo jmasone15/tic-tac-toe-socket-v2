@@ -1,6 +1,7 @@
 /* DOM Selectors */
 body {
     background: linear-gradient(135deg, #cfd9ff 0%, #e2caff 100%);
+    overflow: hidden;
 }
 
 /* Classes */
@@ -58,6 +59,82 @@ body {
 .toast.warning {
     background-color: #ffc107;
     color: #212529;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    aspect-ratio: 1 / 1;
+    margin-bottom: 1rem;
+}
+
+.cell {
+    aspect-ratio: 1 / 1;
+    perspective: 600px;
+}
+
+.cell-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s ease;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.cell-front,
+.active-cell,
+.cell-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    font-weight: bold;
+    border: 2px solid #ccc;
+    user-select: none;
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    color: #333;
+}
+
+.active-cell {
+    cursor: pointer;
+}
+
+.cell-front {
+    z-index: 2;
+}
+
+.cell-back {
+    transform: rotateX(180deg);
+}
+
+.cell.flipped .cell-inner {
+    /* When flipped */
+    animation: flipBounce 0.6s ease forwards;
+}
+
+.cell-back.winning {
+    background-color: #85ff66;
+    border-color: #26b103;
+    color: #222;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(0, 255, 13, 0.8), 0 0 30px rgba(0, 255, 21, 0.4);
+    animation: pulse-glow 1.2s ease-in-out infinite;
+}
+
+.cell-back.losing {
+    background-color: #ff6666;
+    border-color: #940000;
+    color: #222;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.4);
+    animation: pulse-glow-negative 1.2s ease-in-out infinite;
 }
 
 
@@ -124,5 +201,51 @@ body {
     to {
         opacity: 0;
         transform: translateY(-10px);
+    }
+}
+
+@keyframes flipBounce {
+    0% {
+        transform: rotateY(0deg) scale(1);
+    }
+
+    60% {
+        transform: rotateY(200deg) scale(1.05);
+    }
+
+    80% {
+        transform: rotateY(175deg) scale(0.98);
+    }
+
+    100% {
+        transform: rotateY(180deg) scale(1);
+    }
+}
+
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 15px rgba(0, 255, 13, 0.8);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(0, 255, 13, 1);
+    }
+
+    100% {
+        box-shadow: 0 0 15px rgba(0, 255, 13, 0.8);
+    }
+}
+
+@keyframes pulse-glow-negative {
+    0% {
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(255, 0, 0, 1);
+    }
+
+    100% {
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
     }
 }

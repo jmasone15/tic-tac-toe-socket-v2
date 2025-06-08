@@ -2,15 +2,88 @@
 
 const { showElement, hideElement } = domElements;
 
+class Game {
+	constructor() {
+		this.symbol = null;
+		this.ready = false;
+		this.gameActive = false;
+		this.playerMove = false;
+		this.moveCount = 0;
+
+		domElements.gameCells.forEach((cell) => {
+			cell.addEventListener('click', (e) => {
+				e.preventDefault();
+
+				// if (this.gameActive && this.playerMove) {
+				// 	this.move(cell);
+				// }
+
+				if (!cell.classList.contains('flipped')) {
+					this.move(cell);
+				}
+
+				return;
+			});
+		});
+	}
+
+	startGame = (startSymbol) => {
+		this.playerMove = this.symbol === startSymbol;
+		this.gameActive = true;
+
+		if (this.playerMove) {
+			showToast({ message: 'Your turn!' });
+		} else {
+			showToast({ message: 'Opponent turn.', type: 'warning' });
+		}
+
+		hideElement(domElements.pregameDiv);
+		showElement(domElements.wrapperDiv);
+	};
+
+	move = (cell) => {
+		const location = cell.getAttribute('data-cell');
+		this.moveCount++;
+		this.playerMove = false;
+
+		console.log(location);
+
+		// Update DOM & Run Animation
+		const back = cell.querySelector('.cell-back');
+		back.textContent = this.symbol;
+
+		cell.setAttribute('data-value', this.symbol);
+		cell.classList.add('flipped');
+	};
+
+	endGame = () => {
+		this.gameActive = false;
+		this.playerMove = false;
+		this.ready = false;
+		this.moveCount = 0;
+
+		domElements.startBtn.textContent = 'Start Game';
+		hideElement(domElements.wrapperDiv);
+		showElement(domElements.pregameDiv);
+	};
+}
+
 class TTT_Frontend_Socket {
 	constructor() {
 		this.socket = new WebSocket('ws://localhost:3001');
 		this.roomCode;
+		this.game = new Game();
 
 		this.socket.addEventListener('open', this.init);
 		this.socket.addEventListener('message', this.receiveMessage);
 
 		domElements.createEventListener(domElements.startBtn, () => {
+			if (this.game.ready) {
+				return;
+			} else {
+				this.game.ready = true;
+			}
+
 			this.sendMessage({ type: 'player-ready' });
 			showElement(domElements.startBtn, 'blue disabled-button');
 			domElements.startBtn.textContent =
@@ -47,22 +120,51 @@ class TTT_Frontend_Socket {
 	receiveMessage = ({ data }) => {
 		const { type, roomCode, payload } = JSON.parse(data);
 
-		if (type === 'home') {
-			alert(payload.message);
-			this.returnHome();
-		} else if (type === 'joined-room') {
-			this.roomCode = roomCode;
-			this.populatePreGame();
+		switch (type) {
+			case 'home':
+				alert(payload.message);
+				this.returnHome();
+				break;
+			case 'joined-room':
+				this.roomCode = roomCode;
+				this.game.symbol = payload.symbol;
 
-			if (payload.roomFull) {
+				this.populatePreGame();
+
+				if (payload.roomFull) {
+					showElement(domElements.startBtn, 'green');
+					domElements.pregameHeader.textContent = 'Room is full!';
+				}
+
+				break;
+			case 'player-join':
 				showElement(domElements.startBtn, 'green');
-			}
-		} else if (type === 'player-join') {
-			showElement(domElements.startBtn, 'green');
-			showToast({ message: 'Opponent has joined!' });
-		} else if (type === 'player-leave') {
-			hideElement(domElements.startBtn);
-			showToast({ message: 'Opponent has left!', type: 'error' });
+				domElements.pregameHeader.textContent = 'Room is full!';
+				showToast({ message: 'Opponent has joined!' });
+
+				break;
+			case 'player-leave':
+				this.game.symbol = payload.newSymbol;
+
+				hideElement(domElements.startBtn);
+				domElements.pregameHeader.textContent = 'Waiting for opponent...';
+				showToast({ message: 'Opponent has left!', type: 'error' });
+
+				if (this.game.gameActive) {
+					this.game.endGame();
+				}
+
+				break;
+			case 'player-ready':
+				showToast({ message: 'Opponent is ready!' });
+
+				break;
+			case 'start':
+				this.game.startGame(payload.startSymbol);
+
+				break;
+			default:
+				break;
 		}
 
 		return;

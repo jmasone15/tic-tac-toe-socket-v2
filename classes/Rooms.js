@@ -189,7 +189,18 @@ export default class Rooms {
 
 				if (targetRoom.players.every((p) => p.gameReady)) {
 					targetRoom.gameActive = true;
-					console.log('start game');
+
+					const startMessage = new Message({
+						type: 'start',
+						roomCode,
+						payload: {
+							startSymbol: 'X'
+						}
+					});
+					targetRoom.messageRoom(startMessage);
+				} else {
+					const readyMessage = new Message({ type: 'player-ready', roomCode });
+					targetRoom.messageRoom(readyMessage, socket);
 				}
 			}
 		}
