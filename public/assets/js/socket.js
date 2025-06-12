@@ -2,6 +2,38 @@
 
 const { showElement, hideElement } = domElements;
 
+class Cell {
+	constructor(element) {
+		this.element = element;
+		this.front = this.element.querySelector('.cell-front');
+		this.back = this.element.querySelector('.cell-back');
+		this.location = this.element.getAttribute('data-cell');
+	}
+
+	get isFlipped() {
+		return this.element.classList.contains('flipped');
+	}
+
+	/**
+	 * @param {Boolean} bool
+	 */
+	set active(bool) {
+		if (bool) {
+			this.front.classList.add('active-cell');
+		} else {
+			this.front.classList.remove('active-cell');
+		}
+	}
+
+	flip = (bool, symbol) => {
+		if (bool) {
+			this.back.textContent = symbol;
+			this.element.setAttribute('data-value', symbol);
+			this.element.classList.add('flipped');
+		}
+	};
+}
+
 class Game {
 	constructor() {
 		this.symbol = null;
@@ -9,21 +41,36 @@ class Game {
 		this.gameActive = false;
 		this.playerMove = false;
 		this.moveCount = 0;
+		this.cells = [];
 
-		domElements.gameCells.forEach((cell) => {
-			cell.addEventListener('click', (e) => {
+		domElements.gameCells.forEach((element) => {
+			this.cells.push(new Cell(element));
+		});
+
+		this.cells.forEach((cell) => {
+			cell.element.addEventListener('click', (e) => {
 				e.preventDefault();
 
-				// if (this.gameActive && this.playerMove) {
-				// 	this.move(cell);
-				// }
-
-				if (!cell.classList.contains('flipped')) {
-					this.move(cell);
+				if (!this.gameActive || !this.playerMove || cell.isFlipped) {
+					return;
 				}
+
+				this.moveCount++;
+				this.playerMove = false;
+				cell.flip(true, this.symbol);
+				this.cellsActive = false;
 
 				return;
 			});
+		});
+	}
+
+	/**
+	 * @param {Boolean} bool
+	 */
+	set cellsActive(bool) {
+		this.cells.forEach((c) => {
+			c.active = bool;
 		});
 	}
 
@@ -32,28 +79,15 @@ class Game {
 		this.gameActive = true;
 
 		if (this.playerMove) {
+			this.cellsActive = true;
 			showToast({ message: 'Your turn!' });
 		} else {
+			this.cellsActive = false;
 			showToast({ message: 'Opponent turn.', type: 'warning' });
 		}
 
 		hideElement(domElements.pregameDiv);
 		showElement(domElements.wrapperDiv);
-	};
-
-	move = (cell) => {
-		const location = cell.getAttribute('data-cell');
-		this.moveCount++;
-		this.playerMove = false;
-
-		console.log(location);
-
-		// Update DOM & Run Animation
-		const back = cell.querySelector('.cell-back');
-		back.textContent = this.symbol;
-
-		cell.setAttribute('data-value', this.symbol);
-		cell.classList.add('flipped');
 	};
 
 	endGame = () => {
