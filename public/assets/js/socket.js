@@ -1,7 +1,5 @@
 // TODO - setup localStorage/cookie caching of generated User IDs to prevent multiple rooms.
 
-const { showElement, hideElement } = domElements;
-
 class Cell {
 	constructor(element) {
 		this.element = element;
@@ -25,12 +23,10 @@ class Cell {
 		}
 	}
 
-	flip = (bool, symbol) => {
-		if (bool) {
-			this.back.textContent = symbol;
-			this.element.setAttribute('data-value', symbol);
-			this.element.classList.add('flipped');
-		}
+	flip = (symbol) => {
+		this.back.textContent = symbol;
+		this.element.setAttribute('data-value', symbol);
+		this.element.classList.add('flipped');
 	};
 }
 
@@ -52,13 +48,10 @@ class Game {
 				e.preventDefault();
 
 				if (!this.gameActive || !this.playerMove || cell.isFlipped) {
-					return;
+					console.log('Invalid move.');
+				} else {
+					this.flipCell(cell);
 				}
-
-				this.moveCount++;
-				this.playerMove = false;
-				cell.flip(true, this.symbol);
-				this.cellsActive = false;
 
 				return;
 			});
@@ -99,6 +92,38 @@ class Game {
 		domElements.startBtn.textContent = 'Start Game';
 		hideElement(domElements.wrapperDiv);
 		showElement(domElements.pregameDiv);
+	};
+
+	findCell = (location) => {
+		return this.cells.find((cell) => cell.location === location);
+	};
+
+	flipCell = (cell, isInternal = true) => {
+		if (!cell) {
+			return;
+		}
+
+		let targetSymbol;
+
+		if (isInternal) {
+			this.moveCount++;
+			targetSymbol = this.symbol;
+
+			socketConnection.sendMessage({
+				type: 'move',
+				payload: { location: cell.location, symbol: this.symbol }
+			});
+
+			showToast({ message: 'Opponent turn.', type: 'warning' });
+		} else {
+			showToast({ message: 'Your turn!' });
+
+			targetSymbol = this.symbol === 'X' ? 'O' : 'X';
+		}
+
+		this.playerMove = !isInternal;
+		cell.flip(targetSymbol);
+		this.cellsActive = !isInternal;
 	};
 }
 
@@ -197,6 +222,14 @@ class TTT_Frontend_Socket {
 				this.game.startGame(payload.startSymbol);
 
 				break;
+			case 'move':
+				const targetCell = this.game.findCell(payload.location);
+
+				if (targetCell && !targetCell.isFlipped) {
+					this.game.flipCell(targetCell, false);
+				}
+
+				break;
 			default:
 				break;
 		}
@@ -217,4 +250,5 @@ class TTT_Frontend_Socket {
 	};
 }
 
+const { showElement, hideElement } = domElements;
 const socketConnection = new TTT_Frontend_Socket();

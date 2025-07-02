@@ -1,3 +1,9 @@
+// TOAST TYPES:
+// - success
+// - error
+// - info (default)
+// - warning
+
 const showToast = ({ message, type = 'info', seconds = 5 }) => {
 	if (!message) {
 		return;

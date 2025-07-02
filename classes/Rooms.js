@@ -205,4 +205,24 @@ export default class Rooms {
 			}
 		}
 	};
+
+	move = (socket, roomCode, payload) => {
+		const targetRoom = this.findRoom(roomCode);
+
+		if (targetRoom && targetRoom.gameActive) {
+			const { location, symbol } = payload;
+
+			const moveMessage = new Message({
+				type: 'move',
+				roomCode,
+				payload: { location }
+			});
+			targetRoom.messageRoom(moveMessage, socket);
+
+			log({
+				type: `Room ${roomCode}`,
+				message: `Player [${symbol}] played in cell [${location}]`
+			});
+		}
+	};
 }

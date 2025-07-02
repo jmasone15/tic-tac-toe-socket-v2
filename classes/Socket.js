@@ -32,6 +32,8 @@ export default class TTT_Socket {
 			this.rooms.joinRoom({ roomCode, socket });
 		} else if (messageObj.type === 'player-ready') {
 			this.rooms.playerReady(socket, roomCode);
+		} else if (messageObj.type === 'move') {
+			this.rooms.move(socket, roomCode, messageObj.payload);
 		} else {
 			this.rooms.sendSocketHome(socket, 'Something went wrong...');
 		}
