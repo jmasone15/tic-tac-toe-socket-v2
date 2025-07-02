@@ -102,10 +102,6 @@ body {
     color: #333;
 }
 
-.active-cell {
-    cursor: pointer;
-}
-
 .cell-front {
     z-index: 2;
 }
@@ -135,6 +131,14 @@ body {
     font-weight: bold;
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.4);
     animation: pulse-glow-negative 1.2s ease-in-out infinite;
+}
+
+.active-board {
+    cursor: pointer;
+}
+
+.inactive-board {
+    cursor: not-allowed;
 }
 
 
@@ -185,6 +189,11 @@ body {
 
 .home-button:hover {
     background: #f0f0f0;
+    transition: transform 0.1s ease-in-out;
+    transform: scale(1.05);
+}
+
+.active-cell:hover {
     transition: transform 0.1s ease-in-out;
     transform: scale(1.05);
 }

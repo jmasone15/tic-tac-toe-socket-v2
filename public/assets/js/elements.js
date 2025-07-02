@@ -10,6 +10,7 @@ class DomElements {
 		this.pregameDiv = document.getElementById('pre-game');
 		this.wrapperDiv = document.getElementById('wrapper');
 		this.gameCells = document.querySelectorAll('.cell');
+		this.gameBoard = document.getElementById('board');
 
 		// Event Listeners
 		this.createEventListener(this.copyIcon, async () => {

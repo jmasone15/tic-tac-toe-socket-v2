@@ -6,6 +6,7 @@ class Cell {
 		this.front = this.element.querySelector('.cell-front');
 		this.back = this.element.querySelector('.cell-back');
 		this.location = this.element.getAttribute('data-cell');
+		this.symbol = 'Y';
 	}
 
 	get isFlipped() {
@@ -24,6 +25,7 @@ class Cell {
 	}
 
 	flip = (symbol) => {
+		this.symbol = symbol;
 		this.back.textContent = symbol;
 		this.element.setAttribute('data-value', symbol);
 		this.element.classList.add('flipped');
@@ -81,6 +83,10 @@ class Game {
 
 		hideElement(domElements.pregameDiv);
 		showElement(domElements.wrapperDiv);
+		showElement(
+			domElements.gameBoard,
+			this.playerMove ? 'board active-board' : 'board inactive-board'
+		);
 	};
 
 	endGame = () => {
@@ -94,8 +100,65 @@ class Game {
 		showElement(domElements.pregameDiv);
 	};
 
+	checkWinScenarios = (isInternal) => {
+		const resultObj = {
+			result: 'continue',
+			cells: []
+		};
+
+		if (this.moveCount < 5) {
+			return resultObj;
+		}
+
+		// Using the data-cell attribute on the element
+		const winningCombos = [
+			// Row Wins
+			['00', '01', '02'],
+			['10', '11', '12'],
+			['20', '21', '22'],
+			// Column Wins
+			['00', '10', '20'],
+			['01', '11', '21'],
+			['02', '12', '22'],
+			// Diagonal Wins
+			['00', '11', '22'],
+			['02', '11', '20']
+		];
+
+		// Check each scenario against both symbols
+		winningCombos.forEach((combo) => {
+			const targetCells = this.findCells(combo);
+			// const allFlippedAndMatching = targetCells.every(
+			// 	(cell) => cell.isFlipped && cell.symbol === targetCells[0].symbol
+			// );
+
+			const allFlipped = targetCells.every((cell) => cell.isFlipped);
+			const matchingSymbol = targetCells.every(
+				(cell) => cell.symbol === targetCells[0].symbol
+			);
+
+			console.log(allFlipped, matchingSymbol);
+
+			if (allFlipped && matchingSymbol) {
+				resultObj.result = isInternal ? 'win' : 'loss';
+				resultObj.cells = targetCells;
+			}
+		});
+
+		// If no win and all tiles takes, game ends in tie
+		if (this.moveCount === 9) {
+			resultObj.result = 'tie';
+		}
+
+		return resultObj;
+	};
+
 	findCell = (location) => {
 		return this.cells.find((cell) => cell.location === location);
+	};
+
+	findCells = (locations) => {
+		return this.cells.filter((cell) => locations.includes(cell.location));
 	};
 
 	flipCell = (cell, isInternal = true) => {
@@ -106,7 +169,6 @@ class Game {
 		let targetSymbol;
 
 		if (isInternal) {
-			this.moveCount++;
 			targetSymbol = this.symbol;
 
 			socketConnection.sendMessage({
@@ -121,9 +183,23 @@ class Game {
 			targetSymbol = this.symbol === 'X' ? 'O' : 'X';
 		}
 
-		this.playerMove = !isInternal;
+		showElement(
+			domElements.gameBoard,
+			isInternal ? 'board inactive-board' : 'board active-board'
+		);
+
+		this.moveCount++;
 		cell.flip(targetSymbol);
-		this.cellsActive = !isInternal;
+
+		const resultObj = this.checkWinScenarios(isInternal);
+		console.log(resultObj);
+
+		if (resultObj.result === 'continue') {
+			this.cellsActive = !isInternal;
+			this.playerMove = !isInternal;
+		}
+
+		// Handle end game here
 	};
 }
 
