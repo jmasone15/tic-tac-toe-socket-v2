@@ -128,18 +128,11 @@ class Game {
 		// Check each scenario against both symbols
 		winningCombos.forEach((combo) => {
 			const targetCells = this.findCells(combo);
-			// const allFlippedAndMatching = targetCells.every(
-			// 	(cell) => cell.isFlipped && cell.symbol === targetCells[0].symbol
-			// );
-
-			const allFlipped = targetCells.every((cell) => cell.isFlipped);
-			const matchingSymbol = targetCells.every(
-				(cell) => cell.symbol === targetCells[0].symbol
+			const allFlippedAndMatching = targetCells.every(
+				(cell) => cell.isFlipped && cell.symbol === targetCells[0].symbol
 			);
 
-			console.log(allFlipped, matchingSymbol);
-
-			if (allFlipped && matchingSymbol) {
+			if (allFlippedAndMatching) {
 				resultObj.result = isInternal ? 'win' : 'loss';
 				resultObj.cells = targetCells;
 			}
@@ -175,11 +168,7 @@ class Game {
 				type: 'move',
 				payload: { location: cell.location, symbol: this.symbol }
 			});
-
-			showToast({ message: 'Opponent turn.', type: 'warning' });
 		} else {
-			showToast({ message: 'Your turn!' });
-
 			targetSymbol = this.symbol === 'X' ? 'O' : 'X';
 		}
 
@@ -197,6 +186,12 @@ class Game {
 		if (resultObj.result === 'continue') {
 			this.cellsActive = !isInternal;
 			this.playerMove = !isInternal;
+
+			if (isInternal) {
+				showToast({ message: 'Opponent turn.', type: 'warning' });
+			} else {
+				showToast({ message: 'Your turn!' });
+			}
 		}
 
 		// Handle end game here
